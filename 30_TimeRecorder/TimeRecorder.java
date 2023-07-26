@@ -27,16 +27,22 @@ public class TimeRecorder extends Object {
      * 実行日時における出勤／退勤処理を行う。
      *
      * @param args 実行時引数（[0]:出退勤の設定 - "in" or "out"）
-     * @throws IllegalArgumentException 実行時引数の値が不適切な場合
      */
     public static void main(String[] args) {
         
-        String punchStatus = args[0];
-        String timestamp = TimeRecorder.generateTimestamp(punchStatus);
-
         try {
+            String punchStatus = args[0];
+            String timestamp = TimeRecorder.generateTimestamp(punchStatus);
             TimeRecorder.recordTimestamp(timestamp);
-            
+
+        } catch (ArrayIndexOutOfBoundsException anException) {
+            System.out.println("エラー：実行時引数（出退勤の設定）が指定されていません。");
+            anException.printStackTrace();
+
+        } catch (IllegalArgumentException anException) {
+            System.out.println("エラー：実行時引数（出退勤の設定）が不適切です。");
+            anException.printStackTrace();
+
         } catch (IOException anException) {
             System.out.println("エラー：ファイルへの出力で問題が発生しました。");
             anException.printStackTrace();
@@ -48,8 +54,10 @@ public class TimeRecorder extends Object {
      *
      * @param punchStatus 出退勤の設定（"in" or "out"）
      * @return タイムスタンプの文字列
+     * @throws IllegalArgumentException 実行時引数の値が不適切な場合
      */
-    public static String generateTimestamp(String punchStatus) {
+    public static String generateTimestamp(String punchStatus)
+        throws IllegalArgumentException {
 
         String timestamp = null;
         Date currentDate = new Date();
