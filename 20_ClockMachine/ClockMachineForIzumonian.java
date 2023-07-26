@@ -11,17 +11,12 @@ public class ClockMachineForIzumonian extends ClockMachineForJapanese {
     /**
      * 月名
      */
-    public static final String[] MONTH_NAMES = ClockMachineForJapanese.MONTH_NAMES.clone();
-
-    /**
-     * コンストラクタ
-     */
-    public ClockMachineForIzumonian() {
-        int tenthMonth = 10;
-        int tenthMonthIndex = tenthMonth - 1;
-        ClockMachineForIzumonian.MONTH_NAMES[tenthMonthIndex]
-            = ClockMachineForIzumonian.TENTH_MONTH_NAME;
-    }
+    public static final String[] MONTH_NAMES = {
+        "睦月",   "如月", "弥生",
+        "卯月",   "皐月", "水無月",
+        "文月",   "葉月", "長月",
+        "神在月", "霜月", "師走"
+    };
 
     /**
      * 月名の配列を応答する。

@@ -1,4 +1,5 @@
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * 機器としての時計を再現したクラス（仏暦版）
@@ -21,6 +22,22 @@ public class ClockMachineForBuddhist extends ClockMachine {
     public static final String[] DAY_NAMES = {
         "วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัส", "วันศุกร์", "วันเสาร์"
     };
+
+    /**
+     * 現在日時のカレンダーを生成して応答する。
+     *
+     * タイのロケールを設定した上で、現在日時のカレンダーを生成して応答する。
+     *
+     * @see https://docs.oracle.com/javase/8/docs/technotes/guides/intl/calendar.doc.html
+     * @see https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Locale.html#of(java.lang.String,java.lang.String,java.lang.String)
+     */
+    protected Calendar getCalendar() {
+        String language = "th";
+        String country  = "TH";
+        String variant  = "TH";
+        Locale aLocale = Locale.of(language, country, variant);
+        return Calendar.getInstance(aLocale);
+    }
 
     /**
      * 日付の文字列を生成して応答する。

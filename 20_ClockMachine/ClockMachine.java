@@ -20,7 +20,7 @@ public abstract class ClockMachine extends Object {
     public void perform() {
 
         // 各フィールドの設定
-        this.calendar = Calendar.getInstance();
+        this.calendar = this.getCalendar();
 
         // 現在日時の文字列を生成
         String dateString = this.getDateString();
@@ -29,6 +29,17 @@ public abstract class ClockMachine extends Object {
         // 画面出力
         System.out.println(dateString + " " + timeString);
 
+    }
+
+    /**
+     * 現在日時のカレンダーを生成して応答する。
+     *
+     * 言語種別等、文化の違いによって異なるカレンダーを生成すべき場合は、このメソッドをオーバーライドする。
+     *
+     * @return 現在日時のカレンダー
+     */
+    protected Calendar getCalendar() {
+        return Calendar.getInstance();
     }
 
     /**
@@ -51,7 +62,7 @@ public abstract class ClockMachine extends Object {
         int hour   = this.calendar.get(Calendar.HOUR_OF_DAY);   // 時の取得
         int minute = this.calendar.get(Calendar.MINUTE);        // 分の取得
 
-        String timeString = String.format("%02d:%02d", hour, minute);
+        String timeString = hour + ":" + minute;
 
         return timeString;
 
