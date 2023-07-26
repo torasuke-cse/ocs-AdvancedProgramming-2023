@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * 機器としての時計を再現したクラス（西暦版）
  */
-public class ClockMachineForGregorian extends Object {
+public class ClockMachineForGregorian extends ClockMachine {
 
     /**
      * 月名
@@ -25,35 +25,11 @@ public class ClockMachineForGregorian extends Object {
     };
 
     /**
-     * 現在日時のカレンダーを保持するフィールド。
-     */
-    private Calendar calendar = null;
-
-    /**
-     * 時計の機能を再現する。
-     *
-     * 実行した時点の日時を表示する。
-     */
-    public void perform() {
-
-        // 各フィールドの設定
-        this.calendar = Calendar.getInstance();
-
-        // 現在日時の文字列を生成
-        String dateString = this.getDateString();
-        String timeString = this.getTimeString();
-
-        // 画面出力
-        System.out.println(dateString + " " + timeString);
-
-    }
-
-    /**
      * 日付の文字列を生成して応答する。
      *
      * @return 日付の文字列
      */
-    private String getDateString() {
+    protected String getDateString() {
 
         int year           = this.calendar.get(Calendar.YEAR);           // 年の取得
         String monthName   = this.getMonthName();                        // 月名の取得
@@ -70,34 +46,17 @@ public class ClockMachineForGregorian extends Object {
     }
 
     /**
-     * 時刻の文字列を生成して応答する。
+     * 月名の配列を応答する。
      *
-     * @return 時刻の文字列
+     * @return 月名の配列
      */
-    private String getTimeString() {
-    
-        int hour   = this.calendar.get(Calendar.HOUR_OF_DAY);   // 時の取得
-        int minute = this.calendar.get(Calendar.MINUTE);        // 分の取得
-
-        String timeString = String.format("%02d:%02d", hour, minute);
-
-        return timeString;
-
-    }
-
-    /**
-     * 月名を応答する。
-     *
-     * @return 月名の文字列
-     */
-    private String getMonthName() {
+    protected String getMonthName() {
 
         int monthIndex = this.calendar.get(Calendar.MONTH);   // 月の添え字の取得：0〜11
 
-        String monthName = ClockMachineForGregorian.MONTH_NAMES[monthIndex];
+        String[] monthNames = ClockMachineForGregorian.MONTH_NAMES;
 
-        return monthName;
-
+        return monthNames[monthIndex];
     }
 
     /**
