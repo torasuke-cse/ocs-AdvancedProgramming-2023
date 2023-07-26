@@ -1,6 +1,8 @@
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 
 /**
@@ -22,6 +24,11 @@ public class TimeRecorder extends Object {
      * 出力ファイル名
      */
     public static final String FILENAME = "timecard.csv";
+
+    /**
+     * CSVファイルのエンコーディング
+     */
+    public static final String CSV_ENCODING = "SJIS";
 
     /**
      * エントリポイント。
@@ -93,7 +100,13 @@ public class TimeRecorder extends Object {
 
         try (
             BufferedWriter aWriter = new BufferedWriter(
-                new FileWriter(TimeRecorder.FILENAME, isAppending)
+                new OutputStreamWriter(
+                    new FileOutputStream(
+                        new File(TimeRecorder.FILENAME),
+                        isAppending
+                    ),
+                    TimeRecorder.CSV_ENCODING
+                )
             )
         ) {
             aWriter.write(timestamp);   // 書き出しを依頼する
