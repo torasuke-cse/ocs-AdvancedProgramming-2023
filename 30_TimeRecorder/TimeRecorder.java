@@ -88,16 +88,29 @@ public class TimeRecorder extends Object {
 
         System.out.println(timestamp);
 
-        // 追記モードでファイルを開く
-        boolean isAppending = true;
-        FileWriter aWriter = new FileWriter(TimeRecorder.FILENAME, isAppending);
-
         String lineSeparator = System.lineSeparator();   // 改行文字の取得
 
-        aWriter.write(timestamp);       // 書き出しを依頼する
-        aWriter.write(lineSeparator);   // 書き出しを依頼する
-        aWriter.flush();                // 書き出しを強制的に完了させる
-        aWriter.close();                // ファイルを閉じる
+        // 追記モードでファイルを開く
+        boolean isAppending = true;
+        FileWriter aWriter = null;
+
+        try {
+            aWriter = new FileWriter(TimeRecorder.FILENAME, isAppending);
+            aWriter.write(timestamp);       // 書き出しを依頼する
+            aWriter.write(lineSeparator);   // 書き出しを依頼する
+            aWriter.flush();                // 書き出しを強制的に完了させる
+        } catch (IOException anException) {
+            throw anException;              // 呼び出し元にそのまま投げる
+        } finally {
+            // 例外の発生有無に関わらず後始末
+            if (aWriter != null) {
+                try {
+                    aWriter.close();        // ファイルを閉じる
+                } catch (IOException anException) {
+                    // 致し方なし
+                }
+            }
+        }
     }
 
 }
