@@ -1,6 +1,4 @@
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Iterator;
 
 /**
  * 機器としての時計を再現したクラス（西暦版）
@@ -50,59 +48,8 @@ public class ClockMachineForGregorian extends ClockMachine {
      *
      * @return 月名の配列
      */
-    protected String getMonthName() {
-
-        int monthIndex = this.calendar.get(Calendar.MONTH);   // 月の添え字の取得：0〜11
-
-        String[] monthNames = ClockMachineForGregorian.MONTH_NAMES;
-
-        return monthNames[monthIndex];
+    protected String[] getMonthNames() {
+        return ClockMachineForGregorian.MONTH_NAMES;
     }
 
-    /**
-     * 月名をすべて繋げた文字列を応答する。
-     *
-     * 月名を、すべて文字列として結合して応答する。
-     * また、参考プログラムとして、配列要素の参照方法４種類を試行する形で実行する。
-     *
-     * @return 月名を繋げた文字列
-     */
-    public String getAllMonthNames() {
-    
-        // 処理対象のリストを束縛する
-        String[] targetList = ClockMachineForGregorian.MONTH_NAMES;
-
-        // 画面出力の準備
-        String separator = System.getProperty("line.separator");
-        StringBuilder aBuilder = new StringBuilder();
-
-        // カウントアップ（ダメダメ）
-        for (int index = 0; index < targetList.length; index++) {
-            aBuilder.append(targetList[index]).append(" ");
-        }
-
-        aBuilder.append(separator);
-
-        // イテレータ（マシ）
-        Iterator<String> anIterator = Arrays.asList(targetList).iterator();
-        while (anIterator.hasNext()) {
-            aBuilder.append(anIterator.next()).append(" ");
-        }
-
-        aBuilder.append(separator);
-
-        // 拡張for（イケてる）
-        for (String monthName : targetList) {
-            aBuilder.append(monthName).append(" ");
-        }
-
-        aBuilder.append(separator);
-
-        // Stream API
-        Arrays.stream(targetList).forEach((String monthName) -> {
-            aBuilder.append(monthName).append(" ");
-        });
-
-        return aBuilder.toString();
-    }
 }
