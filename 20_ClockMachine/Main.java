@@ -2,12 +2,15 @@ public class Main extends Object {
 
     public static void main(String[] args) {
 
-        ClockMachine aMachine = new ClockMachine();
+        // 西暦表示
+        ClockMachineForGregorian gregorianClock = new ClockMachineForGregorian();
+        gregorianClock.perform();
+        System.out.println(gregorianClock.getAllMonthNames());
 
-        aMachine.perform(ClockMachine.IN_ENGLISH);    // 英名
-        aMachine.perform(ClockMachine.IN_JAPANESE);   // 和名
-        
-        System.out.println(aMachine.getAllMonthNames());
+        // 和暦表示
+        ClockMachineForJapanese japaneseClock = new ClockMachineForJapanese();
+        japaneseClock.perform();
+        System.out.println(japaneseClock.getAllMonthNames());
 
     }
 
