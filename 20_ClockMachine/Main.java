@@ -12,6 +12,16 @@ public class Main extends Object {
         japaneseClock.perform();
         System.out.println(japaneseClock.getAllMonthNames());
 
+        // 和暦表示（出雲版）
+        ClockMachineForIzumonian izumonianClock = new ClockMachineForIzumonian();
+        izumonianClock.perform();
+        System.out.println(izumonianClock.getAllMonthNames());
+
+        // 仏暦表示
+        ClockMachineForBuddhist buddhistClock = new ClockMachineForBuddhist();
+        buddhistClock.perform();
+        System.out.println(buddhistClock.getAllMonthNames());
+
     }
 
 }
