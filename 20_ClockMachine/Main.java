@@ -7,6 +7,8 @@ public class Main extends Object {
         aMachine.perform(ClockMachine.IN_ENGLISH);    // 英名
         aMachine.perform(ClockMachine.IN_JAPANESE);   // 和名
         
+        System.out.println(aMachine.getAllMonthNames());
+
     }
 
 }
