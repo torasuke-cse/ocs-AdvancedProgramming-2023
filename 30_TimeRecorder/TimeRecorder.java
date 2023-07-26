@@ -90,26 +90,16 @@ public class TimeRecorder extends Object {
 
         String lineSeparator = System.lineSeparator();   // 改行文字の取得
 
-        // 追記モードでファイルを開く
-        boolean isAppending = true;
-        FileWriter aWriter = null;
+        boolean isAppending = true;   // 追記モードでファイルを開く
 
-        try {
-            aWriter = new FileWriter(TimeRecorder.FILENAME, isAppending);
+        try (FileWriter aWriter = new FileWriter(TimeRecorder.FILENAME, isAppending)) {
             aWriter.write(timestamp);       // 書き出しを依頼する
             aWriter.write(lineSeparator);   // 書き出しを依頼する
             aWriter.flush();                // 書き出しを強制的に完了させる
+                                            // close()は不要（try-with-resources文）
+
         } catch (IOException anException) {
             throw anException;              // 呼び出し元にそのまま投げる
-        } finally {
-            // 例外の発生有無に関わらず後始末
-            if (aWriter != null) {
-                try {
-                    aWriter.close();        // ファイルを閉じる
-                } catch (IOException anException) {
-                    // 致し方なし
-                }
-            }
         }
     }
 
