@@ -51,12 +51,16 @@ public class TimeRecorder extends Object {
 
         System.out.println(message);
 
-        // ファイルを開く
-        FileWriter aWriter = new FileWriter(TimeRecorder.FILENAME);
+        // 追記モードでファイルを開く
+        boolean isAppending = true;
+        FileWriter aWriter = new FileWriter(TimeRecorder.FILENAME, isAppending);
 
-        aWriter.write(message);    // 書き出しを依頼する
-        aWriter.flush();           // 書き出しを強制的に完了させる
-        aWriter.close();           // ファイルを閉じる
+        String lineSeparator = System.lineSeparator();   // 改行文字の取得
+
+        aWriter.write(message);         // 書き出しを依頼する
+        aWriter.write(lineSeparator);   // 書き出しを依頼する
+        aWriter.flush();                // 書き出しを強制的に完了させる
+        aWriter.close();                // ファイルを閉じる
 
     }
 
