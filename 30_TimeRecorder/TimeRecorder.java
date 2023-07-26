@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -16,13 +18,20 @@ public class TimeRecorder extends Object {
     public static final String PUNCH_OUT = "out";
 
     /**
+     * 出力ファイル名
+     */
+    public static final String FILENAME = "timecard.log";
+
+    /**
      * エントリポイント。
      * 実行日時における出勤／退勤処理を行う。
      *
      * @param args 実行時引数（[0]:出退勤の設定 - "in" or "out"）
      * @throws IllegalArgumentException 実行時引数の値が不適切な場合
+     * @throws IOException ファイル入出力に不具合が生じた場合
      */
-    public static void main(String[] args) throws IllegalArgumentException {
+    public static void main(String[] args)
+        throws IllegalArgumentException, IOException {
         
         String punchStatus = args[0];
         String message = null;
@@ -36,11 +45,18 @@ public class TimeRecorder extends Object {
                 message = "[INFO] " + currentDate + " 退勤";
                 break;
             default:
-                message = "[ERROR] Invalid argument - " + punchStatus;
+                message = "[ERROR] " + currentDate + " Invalid argument - " + punchStatus;
                 throw new IllegalArgumentException(message);
         }
 
         System.out.println(message);
+
+        // ファイルを開く
+        FileWriter aWriter = new FileWriter(TimeRecorder.FILENAME);
+
+        aWriter.write(message);    // 書き出しを依頼する
+        aWriter.flush();           // 書き出しを強制的に完了させる
+        aWriter.close();           // ファイルを閉じる
 
     }
 

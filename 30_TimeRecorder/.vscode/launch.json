@@ -6,18 +6,16 @@
     "configurations": [
         {
             "type": "java",
-            "name": "TimeRecorder",
-            "request": "launch",
-            "mainClass": "TimeRecorder",
-            "args": [
-                "in"
-            ]
-        },
-        {
-            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "TimeRecorder",
+            "request": "launch",
+            "mainClass": "TimeRecorder",
+            "args": "${command:SpecifyProgramArgs}"
         }
     ]
 }
