@@ -186,11 +186,26 @@ public class TimeRecorder extends Object {
                 )
             )
         ) {
+            int countOfIn = 0;
+            int countOfOut = 0;
+
             String line = null;
 
             while ((line = aReader.readLine()) != null) {
                 System.out.println(line);
+
+                String[] values = line.split(",");
+                String punchStatusInJapanese = values[3];
+
+                if (punchStatusInJapanese.equals("出勤")) {
+                    countOfIn++;
+                } else if (punchStatusInJapanese.equals("退勤")) {
+                    countOfOut++;
+                }
             }
+
+            System.out.println("出勤：" + countOfIn);
+            System.out.println("退勤：" + countOfOut);
         
         } catch (IOException anException) {
             throw anException;
