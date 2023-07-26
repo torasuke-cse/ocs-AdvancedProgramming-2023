@@ -21,7 +21,7 @@ public class TimeRecorder extends Object {
     /**
      * 出力ファイル名
      */
-    public static final String FILENAME = "timecard.log";
+    public static final String FILENAME = "timecard.csv";
 
     /**
      * エントリポイント。
@@ -65,13 +65,13 @@ public class TimeRecorder extends Object {
 
         switch (punchStatus) {
             case TimeRecorder.PUNCH_IN:
-                timestamp = "[INFO] " + currentDate + " 出勤";
+                timestamp = "INFO," + currentDate + ",出勤";
                 break;
             case TimeRecorder.PUNCH_OUT:
-                timestamp = "[INFO] " + currentDate + " 退勤";
+                timestamp = "INFO," + currentDate + ",退勤";
                 break;
             default:
-                timestamp = "[ERROR] " + currentDate + " Invalid argument - " + punchStatus;
+                timestamp = "ERROR," + currentDate + ",Invalid argument - " + punchStatus;
                 throw new IllegalArgumentException(timestamp);
         }
 
