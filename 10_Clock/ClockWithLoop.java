@@ -12,14 +12,12 @@ public class ClockWithLoop extends Object {
 
                 System.out.println("It's lunch time!!");
             
-            } else if (hour == 24) {
-
-                System.out.println("Good night...");
-            
             }
             
         }
-	
+
+        System.out.println("Good night...");
+
     }
 
 }
