@@ -53,29 +53,77 @@ public class ClockMachine extends Object {
 
         Calendar aCalendar = Calendar.getInstance();   // 現在日時の生成
 
+        // 現在日時の文字列を生成
+        String dateString = this.getDateString(aCalendar, languageType);
+        String timeString = this.getTimeString(aCalendar);
+
+        // 月名を取得
+        String monthName = this.getMonthName(aCalendar, languageType);
+        
+        // 画面出力
+        System.out.println(dateString + " " + timeString);
+        System.out.println("It's " + monthName + "!");
+
+    }
+
+    /**
+     * 日付の文字列を生成して応答する。
+     *
+     * 指定された言語種別に応じた日付の文字列を生成して応答する。
+     *
+     * @param aCalendar 現在日時のカレンダー
+     * @param languageType 言語種別
+     * @return 日付の文字列
+     */
+    private String getDateString(Calendar aCalendar, int languageType) {
+
         int monthIndex     = aCalendar.get(Calendar.MONTH);          // 月の添え字の取得：0〜11
         int month          = monthIndex + 1;                         // 月の取得：1〜12
         int day            = aCalendar.get(Calendar.DAY_OF_MONTH);   // 日の取得
         int dayOfWeek      = aCalendar.get(Calendar.DAY_OF_WEEK);    // 曜日の取得：1〜7
         int dayOfWeekIndex = dayOfWeek - 1;                          // 曜日の添え字の取得：0〜6
 
+        String dayName = ClockMachine.DAY_NAMES[languageType][dayOfWeekIndex];
+
+        String dateString = month + "/" + day + "(" + dayName + ")";
+
+        return dateString;
+
+    }
+
+    /**
+     * 時刻の文字列を生成して応答する。
+     *
+     * @param aCalendar 現在日時のカレンダー
+     * @return 時刻の文字列
+     */
+    private String getTimeString(Calendar aCalendar) {
+    
         int hour   = aCalendar.get(Calendar.HOUR_OF_DAY);   // 時の取得
         int minute = aCalendar.get(Calendar.MINUTE);        // 分の取得
 
-        // 曜日名の変換
-        String dayName = ClockMachine.DAY_NAMES[languageType][dayOfWeekIndex];
-
-        // 現在日時の文字列を生成
-        String dateString = month + "/" + day + "(" + dayName + ")";
         String timeString = hour + ":" + minute;
 
-        // 月名の変換
-        String monthName = ClockMachine.MONTH_NAMES[languageType][monthIndex];
-        
-        // 画面出力
-        System.out.println(dateString + " " + timeString);
-        System.out.println("It's " + monthName + "!");
-        
+        return timeString;
+
     }
 
+    /**
+     * 月名を応答する。
+     *
+     * 指定された言語種別に応じた月名を応答する。
+     *
+     * @param aCalendar 現在日時のカレンダー
+     * @param languageType 言語種別
+     * @return 月名の文字列
+     */
+    private String getMonthName(Calendar aCalendar, int languageType) {
+
+        int monthIndex = aCalendar.get(Calendar.MONTH);   // 月の添え字の取得：0〜11
+
+        String monthName = ClockMachine.MONTH_NAMES[languageType][monthIndex];
+
+        return monthName;
+
+    }
 }
