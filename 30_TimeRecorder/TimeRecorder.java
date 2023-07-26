@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.util.Date;
 
 /**
@@ -44,6 +45,21 @@ public class TimeRecorder extends Object {
     public static final String CSV_ENCODING = "SJIS";
 
     /**
+     * ソケット通信時のエンコーディング
+     */
+    public static final String SOCKET_ENCODING = "UTF-8";
+
+    /**
+     * ソケットサーバのIPアドレス
+     */
+    public static final String SOCKET_SERVER_IP = "localhost";
+
+    /**
+     * ソケットサーバのポート番号
+     */
+    public static final int SOCKET_SERVER_PORT = 8080;
+
+    /**
      * エントリポイント。
      * 実行日時における出勤／退勤処理を行い、記録を一覧表示する。
      * 操作コマンドは、"in"（出勤）、"out"（退勤）、"list"（一覧表示）がある。
@@ -69,7 +85,8 @@ public class TimeRecorder extends Object {
                     timestamp = TimeRecorder.generateTimestamp(punchStatus, comment);
                 }
 
-                TimeRecorder.recordTimestamp(timestamp);
+                TimeRecorder.recordTimestamp(timestamp);   // ローカルにファイルとして記録
+                TimeRecorder.sendTimestamp(timestamp);     // ソケットサーバ側に記録
             }
 
         } catch (ArrayIndexOutOfBoundsException anException) {
@@ -166,6 +183,33 @@ public class TimeRecorder extends Object {
 
         } catch (IOException anException) {
             throw anException;              // 呼び出し元にそのまま投げる
+        }
+    }
+
+    /**
+     * タイムスタンプをソケットサーバへ送信する。
+     *
+     * @param timestamp タイムスタンプの文字列
+     * @throws IOException ファイル入出力に不具合が生じた場合
+     */
+    public static void sendTimestamp(String timestamp)
+        throws IOException {
+
+        final String SERVER_IP = TimeRecorder.SOCKET_SERVER_IP;
+        final int SERVER_PORT  = TimeRecorder.SOCKET_SERVER_PORT;
+
+        try (
+            Socket aSocket = new Socket(SERVER_IP, SERVER_PORT)
+        ) {
+            OutputStreamWriter aWriter = new OutputStreamWriter(
+                aSocket.getOutputStream(),
+                TimeRecorder.SOCKET_ENCODING
+            );
+            aWriter.write(timestamp);
+            aWriter.flush();
+
+        } catch (IOException aException) {
+            throw aException;
         }
     }
 
