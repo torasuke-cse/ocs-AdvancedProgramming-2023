@@ -28,28 +28,57 @@ public class TimeRecorder extends Object {
      *
      * @param args 実行時引数（[0]:出退勤の設定 - "in" or "out"）
      * @throws IllegalArgumentException 実行時引数の値が不適切な場合
-     * @throws IOException ファイル入出力に不具合が生じた場合
      */
-    public static void main(String[] args)
-        throws IllegalArgumentException, IOException {
+    public static void main(String[] args) {
         
         String punchStatus = args[0];
-        String message = null;
+        String timestamp = TimeRecorder.generateTimestamp(punchStatus);
+
+        try {
+            TimeRecorder.recordTimestamp(timestamp);
+            
+        } catch (IOException anException) {
+            System.out.println("エラー：ファイルへの出力で問題が発生しました。");
+            anException.printStackTrace();
+        }
+    }
+
+    /**
+     * タイムスタンプの文字列を生成する。
+     *
+     * @param punchStatus 出退勤の設定（"in" or "out"）
+     * @return タイムスタンプの文字列
+     */
+    public static String generateTimestamp(String punchStatus) {
+
+        String timestamp = null;
         Date currentDate = new Date();
 
         switch (punchStatus) {
             case TimeRecorder.PUNCH_IN:
-                message = "[INFO] " + currentDate + " 出勤";
+                timestamp = "[INFO] " + currentDate + " 出勤";
                 break;
             case TimeRecorder.PUNCH_OUT:
-                message = "[INFO] " + currentDate + " 退勤";
+                timestamp = "[INFO] " + currentDate + " 退勤";
                 break;
             default:
-                message = "[ERROR] " + currentDate + " Invalid argument - " + punchStatus;
-                throw new IllegalArgumentException(message);
+                timestamp = "[ERROR] " + currentDate + " Invalid argument - " + punchStatus;
+                throw new IllegalArgumentException(timestamp);
         }
 
-        System.out.println(message);
+        return timestamp;
+    }
+
+    /**
+     * タイムスタンプを記録する。
+     *
+     * @param timestamp タイムスタンプの文字列
+     * @throws IOException ファイル入出力に不具合が生じた場合
+     */
+    public static void recordTimestamp(String timestamp)
+        throws IOException {
+
+        System.out.println(timestamp);
 
         // 追記モードでファイルを開く
         boolean isAppending = true;
@@ -57,11 +86,10 @@ public class TimeRecorder extends Object {
 
         String lineSeparator = System.lineSeparator();   // 改行文字の取得
 
-        aWriter.write(message);         // 書き出しを依頼する
+        aWriter.write(timestamp);       // 書き出しを依頼する
         aWriter.write(lineSeparator);   // 書き出しを依頼する
         aWriter.flush();                // 書き出しを強制的に完了させる
         aWriter.close();                // ファイルを閉じる
-
     }
 
 }
