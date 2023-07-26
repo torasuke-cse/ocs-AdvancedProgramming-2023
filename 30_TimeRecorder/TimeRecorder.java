@@ -7,6 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -60,6 +67,41 @@ public class TimeRecorder extends Object {
     public static final int SOCKET_SERVER_PORT = 8080;
 
     /**
+     * データベースサーバのIPアドレス
+     */
+    public static final String DB_SERVER_IP = "10.15.169.63";
+
+    /**
+     * データベースサーバのポート番号
+     */
+    public static final int DB_SERVER_PORT = 3306;
+
+    /**
+     * データベース名
+     */
+    public static final String DB_NAME = "y2023_r2b";
+
+    /**
+     * データベースのユーザ名
+     */
+    public static final String DB_USER = "s2023_r2b";
+
+    /**
+     * データベースのパスワード
+     */
+    public static final String DB_PASSWORD = "ocs@4611";
+
+    /**
+     * 出退勤テーブルの名称
+     */
+    public static final String TABLE_NAME = "timecard_22XXXX";
+
+    /**
+     * 日付フォーマット
+     */
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+    /**
      * エントリポイント。
      * 実行日時における出勤／退勤処理を行い、記録を一覧表示する。
      * 操作コマンドは、"in"（出勤）、"out"（退勤）、"list"（一覧表示）がある。
@@ -86,7 +128,8 @@ public class TimeRecorder extends Object {
                 }
 
                 TimeRecorder.recordTimestamp(timestamp);   // ローカルにファイルとして記録
-                TimeRecorder.sendTimestamp(timestamp);     // ソケットサーバ側に記録
+                //TimeRecorder.sendTimestamp(timestamp);     // ソケットサーバ側に記録
+                TimeRecorder.insertTimestamp(timestamp);     // データベースサーバ側に記録
             }
 
         } catch (ArrayIndexOutOfBoundsException anException) {
@@ -131,7 +174,7 @@ public class TimeRecorder extends Object {
 
         String timestamp = null;
         String userName = TimeRecorder.USER_NAME;
-        Date currentDate = new Date();
+        String currentDate = TimeRecorder.dateFormat.format(new Date());
 
         if (comment == null) {
             comment = "";
@@ -210,6 +253,81 @@ public class TimeRecorder extends Object {
 
         } catch (IOException aException) {
             throw aException;
+        }
+    }
+
+    /**
+     * タイムスタンプをデータベースサーバへ登録（挿入）する。
+     *
+     * @param timestamp タイムスタンプの文字列
+     * @throws IllegalStateException データベース操作の過程で不具合が生じた場合
+     */
+    public static void insertTimestamp(String timestamp)
+        throws IllegalStateException {
+
+        // タイムスタンプ文字列を分解する
+        int limitOfSplit = -5;
+        String[] values = timestamp.split(",", limitOfSplit);
+
+        // データベースに格納するデータ項目を整理する
+        String type        = values[0];
+        String username    = values[1];
+
+        Date aDate = null;
+
+        try {
+            aDate = TimeRecorder.dateFormat.parse(values[2]);
+        } catch (ParseException anException) {
+            throw new IllegalStateException("Invalid format of timestamp");
+        }
+
+        Timestamp timestampValue = new Timestamp(aDate.getTime());
+
+        String punchStatus = values[3];
+        String comment     = values[4];
+
+        // データベース接続に使用するドライバを読み込む
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException anException) {
+            throw new IllegalStateException("Cannot load DB driver");
+        }
+
+        // データベース接続に必要な情報を整理する
+        final String SERVER_IP   = TimeRecorder.DB_SERVER_IP;
+        final int SERVER_PORT    = TimeRecorder.DB_SERVER_PORT;
+        final String DB_NAME     = TimeRecorder.DB_NAME;
+        final String DB_USER     = TimeRecorder.DB_USER;
+        final String DB_PASSWORD = TimeRecorder.DB_PASSWORD;
+
+        StringBuilder url = new StringBuilder();
+        url.append("jdbc:mariadb://");
+        url.append(SERVER_IP).append(":").append(SERVER_PORT).append("/");
+        url.append(DB_NAME);
+        url.append("?user=").append(DB_USER);
+        url.append("&password=").append(DB_PASSWORD);
+
+        // データベースに接続してレコード挿入を実行する
+        try (
+            Connection aConnection = DriverManager.getConnection(url.toString())
+        ) {
+            String sql = "INSERT INTO " + TimeRecorder.TABLE_NAME + " VALUES(?, ?, ?, ?, ?)";
+            PreparedStatement aStatement = aConnection.prepareStatement(sql);
+
+            aStatement.setString(1, type);
+            aStatement.setString(2, username);
+            aStatement.setTimestamp(3, timestampValue);
+            aStatement.setString(4, punchStatus);
+            aStatement.setString(5, comment);
+
+            int affectedRows = aStatement.executeUpdate();
+
+            if (affectedRows != 1) {
+                throw new IllegalStateException("Cannot insert timestamp");
+            }
+
+        } catch (SQLException anException) {
+            throw new IllegalStateException(anException.getMessage());
         }
     }
 
