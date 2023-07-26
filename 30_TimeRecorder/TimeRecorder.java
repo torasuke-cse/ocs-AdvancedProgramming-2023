@@ -1,6 +1,7 @@
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Date;
@@ -21,6 +22,11 @@ public class TimeRecorder extends Object {
     public static final String PUNCH_OUT = "out";
 
     /**
+     * 出退勤の一覧表示を表すコマンド文字列
+     */
+    public static final String COMMAND_LIST = "list";
+
+    /**
      * 出力ファイル名
      */
     public static final String FILENAME = "timecard.csv";
@@ -32,16 +38,22 @@ public class TimeRecorder extends Object {
 
     /**
      * エントリポイント。
-     * 実行日時における出勤／退勤処理を行う。
+     * 実行日時における出勤／退勤処理を行い、記録を一覧表示する。
      *
-     * @param args 実行時引数（[0]:出退勤の設定 - "in" or "out"）
+     * @param args 実行時引数（[0]:操作コマンド - "in", "out" or "list"）
      */
     public static void main(String[] args) {
         
         try {
-            String punchStatus = args[0];
-            String timestamp = TimeRecorder.generateTimestamp(punchStatus);
-            TimeRecorder.recordTimestamp(timestamp);
+            String command = args[0];
+
+            if (command.equals(TimeRecorder.COMMAND_LIST)) {
+                TimeRecorder.printTimestamps();
+            } else {
+                String punchStatus = command;
+                String timestamp = TimeRecorder.generateTimestamp(punchStatus);
+                TimeRecorder.recordTimestamp(timestamp);
+            }
 
         } catch (ArrayIndexOutOfBoundsException anException) {
             System.out.println("エラー：実行時引数（出退勤の設定）が指定されていません。");
@@ -52,7 +64,7 @@ public class TimeRecorder extends Object {
             anException.printStackTrace();
 
         } catch (IOException anException) {
-            System.out.println("エラー：ファイルへの出力で問題が発生しました。");
+            System.out.println("エラー：ファイルの入出力で問題が発生しました。");
             anException.printStackTrace();
         }
     }
@@ -116,6 +128,29 @@ public class TimeRecorder extends Object {
 
         } catch (IOException anException) {
             throw anException;              // 呼び出し元にそのまま投げる
+        }
+    }
+
+    /**
+     * 出退勤の記録を一覧表示する。
+     *
+     * @throws IOException ファイル入出力に不具合が生じた場合
+     */
+    public static void printTimestamps() throws IOException {
+
+        final int EOF = -1;   // End Of File
+
+        try (
+            FileReader aReader = new FileReader(TimeRecorder.FILENAME)
+        ) {
+            int characterValue = 0;
+
+            while ((characterValue = aReader.read()) != EOF) {
+                System.out.printf("%c", characterValue);
+            }
+        
+        } catch (IOException anException) {
+            throw anException;
         }
     }
 
