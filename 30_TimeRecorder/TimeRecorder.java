@@ -1,3 +1,4 @@
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -138,15 +139,15 @@ public class TimeRecorder extends Object {
      */
     public static void printTimestamps() throws IOException {
 
-        final int EOF = -1;   // End Of File
-
         try (
-            FileReader aReader = new FileReader(TimeRecorder.FILENAME)
+            BufferedReader aReader = new BufferedReader(
+                new FileReader(TimeRecorder.FILENAME)
+            )
         ) {
-            int characterValue = 0;
+            String line = null;
 
-            while ((characterValue = aReader.read()) != EOF) {
-                System.out.printf("%c", characterValue);
+            while ((line = aReader.readLine()) != null) {
+                System.out.println(line);
             }
         
         } catch (IOException anException) {
