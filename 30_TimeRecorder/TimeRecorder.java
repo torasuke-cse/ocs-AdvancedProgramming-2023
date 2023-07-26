@@ -14,6 +14,11 @@ import java.util.Date;
 public class TimeRecorder extends Object {
 
     /**
+     * ユーザ名
+     */
+    public static final String USER_NAME = "R2A 野木雅文";
+
+    /**
      * 出勤を表す定数
      */
     public static final String PUNCH_IN = "in";
@@ -41,8 +46,9 @@ public class TimeRecorder extends Object {
     /**
      * エントリポイント。
      * 実行日時における出勤／退勤処理を行い、記録を一覧表示する。
+     * 操作コマンドは、"in"（出勤）、"out"（退勤）、"list"（一覧表示）がある。
      *
-     * @param args 実行時引数（[0]:操作コマンド - "in", "out" or "list"）
+     * @param args 実行時引数（[0]:操作コマンド、[1]:出退勤コメント）
      */
     public static void main(String[] args) {
         
@@ -51,9 +57,18 @@ public class TimeRecorder extends Object {
 
             if (command.equals(TimeRecorder.COMMAND_LIST)) {
                 TimeRecorder.printTimestamps();
+
             } else {
                 String punchStatus = command;
-                String timestamp = TimeRecorder.generateTimestamp(punchStatus);
+                String timestamp = null;
+
+                if (args.length == 1) {
+                    timestamp = TimeRecorder.generateTimestamp(punchStatus);
+                } else {
+                    String comment = args[1];
+                    timestamp = TimeRecorder.generateTimestamp(punchStatus, comment);
+                }
+
                 TimeRecorder.recordTimestamp(timestamp);
             }
 
@@ -72,7 +87,7 @@ public class TimeRecorder extends Object {
     }
 
     /**
-     * タイムスタンプの文字列を生成する。
+     * タイムスタンプの文字列を生成する。（コメントなし）
      *
      * @param punchStatus 出退勤の設定（"in" or "out"）
      * @return タイムスタンプの文字列
@@ -81,15 +96,36 @@ public class TimeRecorder extends Object {
     public static String generateTimestamp(String punchStatus)
         throws IllegalArgumentException {
 
+        String comment = null;
+
+        return TimeRecorder.generateTimestamp(punchStatus, comment);
+    }
+
+    /**
+     * タイムスタンプの文字列を生成する。（コメントあり）
+     *
+     * @param punchStatus 出退勤の設定（"in" or "out"）
+     * @param comment 出退勤のコメント（nullの場合は空文字で生成）
+     * @return タイムスタンプの文字列
+     * @throws IllegalArgumentException 実行時引数の値が不適切な場合
+     */
+    public static String generateTimestamp(String punchStatus, String comment)
+        throws IllegalArgumentException {
+
         String timestamp = null;
+        String userName = TimeRecorder.USER_NAME;
         Date currentDate = new Date();
+
+        if (comment == null) {
+            comment = "";
+        }
 
         switch (punchStatus) {
             case TimeRecorder.PUNCH_IN:
-                timestamp = "INFO," + currentDate + ",出勤";
+                timestamp = "INFO," + userName + "," + currentDate + ",出勤," + comment;
                 break;
             case TimeRecorder.PUNCH_OUT:
-                timestamp = "INFO," + currentDate + ",退勤";
+                timestamp = "INFO," + userName + "," + currentDate + ",退勤," + comment;
                 break;
             default:
                 timestamp = "ERROR," + currentDate + ",Invalid argument - " + punchStatus;
