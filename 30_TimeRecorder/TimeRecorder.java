@@ -1,3 +1,4 @@
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
@@ -88,15 +89,17 @@ public class TimeRecorder extends Object {
 
         System.out.println(timestamp);
 
-        String lineSeparator = System.lineSeparator();   // 改行文字の取得
-
         boolean isAppending = true;   // 追記モードでファイルを開く
 
-        try (FileWriter aWriter = new FileWriter(TimeRecorder.FILENAME, isAppending)) {
-            aWriter.write(timestamp);       // 書き出しを依頼する
-            aWriter.write(lineSeparator);   // 書き出しを依頼する
-            aWriter.flush();                // 書き出しを強制的に完了させる
-                                            // close()は不要（try-with-resources文）
+        try (
+            BufferedWriter aWriter = new BufferedWriter(
+                new FileWriter(TimeRecorder.FILENAME, isAppending)
+            )
+        ) {
+            aWriter.write(timestamp);   // 書き出しを依頼する
+            aWriter.newLine();          // 改行を依頼する
+            aWriter.flush();            // 書き出しを強制的に完了させる
+                                        // close()は不要（try-with-resources文）
 
         } catch (IOException anException) {
             throw anException;              // 呼び出し元にそのまま投げる
